@@ -48,8 +48,9 @@ is the authored source (i.e. there is no corresponding `draft-*.md` or
 
 ## Documentation
 
-Detailed documentation lives under `lib/doc/` (the `lib/` directory is the
-i-d-template toolchain, vendored as a git submodule):
+Detailed documentation lives under `lib/doc/` (`lib/` is the i-d-template
+toolchain, obtained by the Makefile as a git submodule, a symlink to
+`$ID_TEMPLATE_HOME`, or a shallow clone, depending on how the repo was set up):
 
 - `lib/doc/SETUP.md` — installing dependencies and platform notes
 - `lib/doc/FEATURES.md` — full feature reference
@@ -59,6 +60,6 @@ i-d-template toolchain, vendored as a git submodule):
 
 ## Never Do
 
-- Do not modify files under `lib/`. This is the i-d-template toolchain, updated separately via the git submodule.
+- Do not modify files under `lib/`. It holds the i-d-template toolchain and the Python virtualenv, both managed by the build (`make update-deps` updates the tools).
 - Do not edit `.github/workflows/` unless the task explicitly concerns CI configuration.
 - Do not commit `draft-*.txt` or `draft-*.html` — these are build artifacts. The intermediate `draft-*.xml` produced from a `.md` source is also a build artifact.
