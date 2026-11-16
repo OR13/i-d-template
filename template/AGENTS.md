@@ -1,65 +1,33 @@
-# IETF Internet-Draft Development
+# AGENTS.md
 
-## Build Commands
+IETF Internet-Drafts built with
+[i-d-template](https://github.com/martinthomson/i-d-template).
+Tooling docs: `lib/doc/` (`FEATURES.md`, `SUBMITTING.md`).
 
-| Command | Description |
-|---------|-------------|
-| `make` | Build all outputs (txt, html) and run lint |
-| `make latest` | Build txt and html without linting |
-| `make lint` | Run all lint checks |
-| `make fix-lint` | Auto-fix lint issues (whitespace) |
-| `make txt` | Build text output only |
-| `make html` | Build HTML output only |
-| `make diff` | Show changes since last published draft |
-| `make clean` | Remove build artifacts |
-| `make idnits` | Run IETF nits checker |
-| `make spellcheck` | Run spell checker |
-| `make next` | Build versioned copies for submission |
-| `make deps` | Install dependencies |
+## Commands
 
-Before `make next`, it is a good idea to run `make idnits` and `make spellcheck`
-and address any reported issues, but neither is required by the build.
+- `make`: build txt/html and lint. Run after completing a batch of draft edits,
+  before handing back or committing.
+- `make fix-lint`: fix trailing whitespace and missing final newlines.
+- `make spellcheck`, `make idnits`: optional, before a submission.
+- `make diff`: rfcdiff against the last published version (`diff-*.html`).
+- No network? Add `DISABLE_FETCHING=true`.
 
-## Before Committing
+Git hooks check commits (build + lint) and draft tag pushes. Fix what they
+report; never pass `--no-verify` unless the user asks.
 
-A pre-commit hook runs `make lint` and builds HTML to catch errors.
-Always fix lint issues before committing:
+## Editing drafts
 
-1. Run `make` to build and lint
-2. Fix any errors reported by lint (or run `make fix-lint` for whitespace issues)
-3. Stage and commit
+- Edit the authored `draft-*.md`, `.org`, or `.xml` source; never edit generated
+  outputs. Generated `.txt`, `.html`, and `.xml` files must not be committed
+  (a newly added draft's `.xml` is not gitignored until `make update-files`).
+- Each draft must contain its own name as `draft-<name>-latest`. Lint fails otherwise.
 
-**Do not use `git commit --no-verify`** to bypass the pre-commit hook unless the user explicitly requests it.
+## Do not
 
-## Source Files
-
-Drafts are authored in one of three formats, kept in the repo root:
-
-- `draft-*.md` — Markdown, the most common format. Two flavors are supported:
-  [kramdown-rfc](https://github.com/cabo/kramdown-rfc) (most common) and
-  [mmark](https://mmark.miek.nl/).
-- `draft-*.xml` — [xml2rfc](https://authors.ietf.org/en/rfcxml-overview) v3, used directly when authored as XML.
-- `draft-*.org` — Org mode (rare).
-
-Note: when a draft is authored in Markdown, the build produces an intermediate
-`draft-*.xml` file as a build artifact. Only edit `draft-*.xml` directly if it
-is the authored source (i.e. there is no corresponding `draft-*.md` or
-`draft-*.org`). When in doubt, edit the `.md` file.
-
-## Documentation
-
-Detailed documentation lives under `lib/doc/` (`lib/` is the i-d-template
-toolchain, obtained by the Makefile as a git submodule, a symlink to
-`$ID_TEMPLATE_HOME`, or a shallow clone, depending on how the repo was set up):
-
-- `lib/doc/SETUP.md` — installing dependencies and platform notes
-- `lib/doc/FEATURES.md` — full feature reference
-- `lib/doc/SUBMITTING.md` — how to tag and submit drafts to the IETF datatracker
-- `lib/doc/REPO.md` — repository setup guide
-- `lib/doc/TEMPLATE.md` — template-based setup workflow
-
-## Never Do
-
-- Do not modify files under `lib/`. It holds the i-d-template toolchain and the Python virtualenv, both managed by the build (`make update-deps` updates the tools).
-- Do not edit `.github/workflows/` unless the task explicitly concerns CI configuration.
-- Do not commit `draft-*.txt` or `draft-*.html` — these are build artifacts. The intermediate `draft-*.xml` produced from a `.md` source is also a build artifact.
+- Create or push `draft-*-NN` tags. Pushing one submits the draft to the
+  IETF datatracker. Leave submission to the user.
+- Edit `lib/`. It's the toolchain, possibly a symlink shared with other repos;
+  use `make update` when a toolchain update is requested.
+- Hand-edit generated `README.md`.
+- Edit `.github/workflows/` unless asked.
